@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Popup from "reactjs-popup";
@@ -14,7 +14,10 @@ interface EmployeesProps {
   openEmployeePopup: boolean;
   setOpenEmployeePopup: (value: boolean) => void;
   teamsList: Team[];
+  getTeamsList: () => Promise<void>;
   getEmployeeList: () => Promise<void>;
+  editEmployeeeId: number | null;
+  setEditEmployeeId: (value: number | null) => void;
 }
 
 interface EmployeeForm {
@@ -28,23 +31,50 @@ const Employees: React.FC<EmployeesProps> = ({
   openEmployeePopup,
   setOpenEmployeePopup,
   teamsList,
+  getTeamsList,
   getEmployeeList,
+  editEmployeeeId,
+  setEditEmployeeId,
 }) => {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<EmployeeForm>();
 
   const token = localStorage.getItem("token");
+
+  const getEmployeeDetailsById = async (employeeId: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/v1/user/employee/${employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setValue("employeeName", response.data.employee.employee_name);
+        setValue("employeeEmail", response.data.employee.employee_email);
+        setValue(
+          "employeeDesignation",
+          response.data.employee.employee_designation
+        );
+        setValue("employeePlatform", response.data.employee.employee_platform);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
 
   const formSubmit = async (data: EmployeeForm) => {
     try {
       const selectedTeam = teamsList.find(
         (team: Team) => team.team_name === data.employeePlatform
       );
-      console.log(selectedTeam);
       const payload = {
         ...data,
         teamId: selectedTeam?.id,
@@ -69,6 +99,49 @@ const Employees: React.FC<EmployeesProps> = ({
     }
   };
 
+  const updatedFormSubmit = async (data: EmployeeForm) => {
+    try {
+      const selectedTeam = teamsList.find(
+        (team: Team) => team.team_name === data.employeePlatform
+      );
+      const payload = {
+        ...data,
+        employeeId: editEmployeeeId,
+        teamId: selectedTeam?.id,
+      };
+      const response = await axios.put(
+        "http://localhost:5000/api/v1/user/employee/update",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setOpenEmployeePopup(false);
+        reset();
+        setEditEmployeeId(null);
+        getTeamsList();
+        toast.success("Employee updated successfully");
+        getEmployeeList();
+      }
+    } catch (error) {
+      console.error("Employee update failed:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (editEmployeeeId) {
+      getEmployeeDetailsById(editEmployeeeId);
+    } else {
+      setValue("employeePlatform", "");
+      setValue("employeeName", "");
+      setValue("employeeEmail", "");
+      setValue("employeeDesignation", "");
+    }
+  }, [editEmployeeeId]);
+
   return (
     <Popup
       open={openEmployeePopup}
@@ -77,7 +150,9 @@ const Employees: React.FC<EmployeesProps> = ({
     >
       <form
         className="p-5! space-y-2!"
-        onSubmit={handleSubmit((data: EmployeeForm) => formSubmit(data))}
+        onSubmit={handleSubmit(
+          editEmployeeeId ? updatedFormSubmit : formSubmit
+        )}
       >
         <h2 className="text-lg font-semibold mb-4!">Add Employee</h2>
 
@@ -155,6 +230,7 @@ const Employees: React.FC<EmployeesProps> = ({
 
         <div className="flex flex-col sm:flex-row sm:justify-end mt-3! space-x-3! space-y-2! sm:space-y-0!">
           <button
+            type="button"
             className="bg-red-500 px-4! w-full sm:w-auto py-2! rounded text-sm text-white cursor-pointer"
             onClick={() => setOpenEmployeePopup(false)}
           >
@@ -164,7 +240,7 @@ const Employees: React.FC<EmployeesProps> = ({
             className="bg-blue-600 px-4! py-2! rounded text-white text-sm cursor-pointer"
             type="submit"
           >
-            Add Employee
+            {editEmployeeeId ? "Update Employee" : "Add Employee"}
           </button>
         </div>
       </form>

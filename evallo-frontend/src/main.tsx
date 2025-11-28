@@ -8,7 +8,7 @@ import { ToastContainer } from "react-toastify";
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AuthProvider>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
       <App />
     </AuthProvider>
   </BrowserRouter>

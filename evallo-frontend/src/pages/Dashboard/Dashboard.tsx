@@ -6,6 +6,7 @@ import { MdEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import Employees from "../../components/Employees/Employees";
 import Teams from "../../components/Teams/Teams";
+import { toast } from "react-toastify";
 
 interface TeamsData {
   id: number;
@@ -14,6 +15,7 @@ interface TeamsData {
 }
 
 interface EmployeeData {
+  id: number;
   employee_name: string;
   employee_designation: string;
   employee_email: string;
@@ -28,6 +30,9 @@ const Dashboard = () => {
   const [teamsList, setTeamsList] = React.useState([]);
   const [employeeList, setEmployeeList] = React.useState([]);
   const [editTeamId, setEditTeamId] = React.useState<number | null>(null);
+  const [editEmployeeeId, setEditEmployeeId] = React.useState<number | null>(
+    null
+  );
 
   const getTeamsList = async () => {
     try {
@@ -65,7 +70,44 @@ const Dashboard = () => {
     }
   };
 
-  console.log(employeeList);
+  const deleteTeam = async (teamId: number) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/v1/user/teams/${teamId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Team deleted successfully");
+        getTeamsList();
+      }
+    } catch (error) {
+      console.error("Error deleting team:", error);
+    }
+  };
+
+  const deleteEmployee = async (employeeId: number) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/v1/user/employee/${employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Employee deleted successfully");
+        getEmployeeList();
+        getTeamsList();
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+    }
+  };
 
   const getMembersCount = async () => {
     try {
@@ -122,7 +164,10 @@ const Dashboard = () => {
         openEmployeePopup={openEmployeePopup}
         setOpenEmployeePopup={setOpenEmployeePopup}
         teamsList={teamsList}
+        getTeamsList={getTeamsList}
         getEmployeeList={getEmployeeList}
+        editEmployeeeId={editEmployeeeId}
+        setEditEmployeeId={setEditEmployeeId}
       />
       <Teams
         openTeamPopup={openTeamPopup}
@@ -177,8 +222,21 @@ const Dashboard = () => {
                     <span className="bg-slate-100 rounded-full px-3! py-2! text-sm text-gray-600">
                       {employee.employee_platform}
                     </span>
-                    <MdEdit color="blue" size={20} />
-                    <AiOutlineDelete color="red" size={20} />
+                    <MdEdit
+                      color="blue"
+                      size={20}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setEditEmployeeId(employee.id);
+                        setOpenEmployeePopup(true);
+                      }}
+                    />
+                    <AiOutlineDelete
+                      color="red"
+                      size={20}
+                      className="cursor-pointer"
+                      onClick={() => deleteEmployee(employee.id)}
+                    />
                   </div>
                 </div>
               ))
@@ -209,8 +267,14 @@ const Dashboard = () => {
                           setEditTeamId(team.id);
                           setOpenTeamPopup(true);
                         }}
+                        className="cursor-pointer"
                       />
-                      <AiOutlineDelete color="red" size={20} />
+                      <AiOutlineDelete
+                        color="red"
+                        size={20}
+                        onClick={() => deleteTeam(team.id)}
+                        className="cursor-pointer"
+                      />
                     </div>
                   </div>
                 ))
