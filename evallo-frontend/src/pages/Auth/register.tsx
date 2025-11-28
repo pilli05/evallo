@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 type RegisterForm = {
   name: string;
@@ -8,17 +10,33 @@ type RegisterForm = {
 };
 
 const Register = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterForm>();
 
+  const formSubmit = async (data: RegisterForm) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/auth/register",
+        data
+      );
+      if (response.status === 201) {
+        toast.success("Registration successfully");
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
+  };
+
   return (
-    <div className="h-screen flex justify-center items-center bg-slate-200">
+    <div className="flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <form
         className="bg-white rounded-lg p-8! space-y-5! max-w-96 md:w-xl"
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit(formSubmit)}
       >
         <h1 className="text-center font-bold mb-3! text-xl text-violet-600">
           Register
@@ -105,7 +123,7 @@ const Register = () => {
         <p className="text-sm text-gray-500 my-2!">
           Already registered?
           <Link to="/login" className="text-blue-700 font-semibold ml-1!">
-            Login here
+            Login
           </Link>
         </p>
       </form>
