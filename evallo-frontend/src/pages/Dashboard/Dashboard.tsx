@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useAuth } from "../../hook/useAuth";
-import Header from "../../components/Header/Header";
 import { MdEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import Employees from "../../components/Employees/Employees";
@@ -12,6 +11,10 @@ interface TeamsData {
   id: number;
   team_name: string;
   teams_count: number;
+}
+
+interface Logs {
+  message: string;
 }
 
 interface EmployeeData {
@@ -33,6 +36,7 @@ const Dashboard = () => {
   const [editEmployeeeId, setEditEmployeeId] = React.useState<number | null>(
     null
   );
+  const [userDataLogs, setUserDataLogs] = React.useState([]);
 
   const getTeamsList = async () => {
     try {
@@ -83,6 +87,8 @@ const Dashboard = () => {
       if (response.status === 200) {
         toast.success("Team deleted successfully");
         getTeamsList();
+        getEmployeeList();
+        getLogs();
       }
     } catch (error) {
       console.error("Error deleting team:", error);
@@ -103,6 +109,7 @@ const Dashboard = () => {
         toast.success("Employee deleted successfully");
         getEmployeeList();
         getTeamsList();
+        getLogs();
       }
     } catch (error) {
       console.error("Error deleting employee:", error);
@@ -127,6 +134,24 @@ const Dashboard = () => {
     }
   };
 
+  const getLogs = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/user/logs",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setUserDataLogs(response.data.logs);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+
   useEffect(() => {
     const getUserProfile = async () => {
       try {
@@ -146,6 +171,8 @@ const Dashboard = () => {
       }
     };
     getUserProfile();
+
+    getLogs();
   }, []);
 
   useEffect(() => {
@@ -159,7 +186,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="dashboard">
       <Employees
         openEmployeePopup={openEmployeePopup}
         setOpenEmployeePopup={setOpenEmployeePopup}
@@ -168,6 +195,7 @@ const Dashboard = () => {
         getEmployeeList={getEmployeeList}
         editEmployeeeId={editEmployeeeId}
         setEditEmployeeId={setEditEmployeeId}
+        getLogs={getLogs}
       />
       <Teams
         openTeamPopup={openTeamPopup}
@@ -175,9 +203,9 @@ const Dashboard = () => {
         getTeamsList={getTeamsList}
         editTeamId={editTeamId}
         setEditTeamId={setEditTeamId}
+        getLogs={getLogs}
       />
 
-      <Header />
       <div className="my-2! p-5!">
         <h1 className="text-blue-600 font-bold">
           Organization - {userData.org_name}
@@ -189,7 +217,7 @@ const Dashboard = () => {
               <h1 className="text-xl font-semibold">Employees</h1>
               <div className="flex items-center space-x-3!">
                 <button
-                  className="bg-gray-300 px-4! py-2! rounded-md text-sm text-gray-700 cursor-pointer"
+                  className="bg-gray-300! px-4! py-2! rounded-md text-sm text-gray-700 cursor-pointer"
                   onClick={() => {
                     setOpenTeamPopup(true);
                     setEditTeamId(null);
@@ -198,7 +226,7 @@ const Dashboard = () => {
                   + Team
                 </button>
                 <button
-                  className="bg-blue-700 px-4! py-2! rounded-md text-sm text-white cursor-pointer"
+                  className="bg-blue-700! px-4! py-2! rounded-md text-sm text-white cursor-pointer"
                   onClick={() => setOpenEmployeePopup(true)}
                 >
                   + Employee
@@ -210,7 +238,7 @@ const Dashboard = () => {
               employeeList.map((employee: EmployeeData, index) => (
                 <div
                   key={index}
-                  className="shadow rounded-md px-2! py-5! my-3! flex items-center justify-between"
+                  className="shadow shadow-gray-400 rounded-md px-2! py-5! mt-5! my-3! flex items-center justify-between"
                 >
                   <div>
                     <h1 className=" font-medium">{employee.employee_name}</h1>
@@ -282,11 +310,17 @@ const Dashboard = () => {
                 <p>No teams found</p>
               )}
             </div>
-            <div className="shadow shadow-gray-400 rounded-md p-4! ">
+            <div className="shadow shadow-gray-400 rounded-md p-4!">
               <h1 className="text-xl font-semibold mb-3!">Activity Log</h1>
-              <p className="text-gray-600 text-sm">
-                [2025-11-20 09:00] User 'admin' logged in.
-              </p>
+              {userDataLogs && userDataLogs.length > 0 ? (
+                userDataLogs.map((logs: Logs, index) => (
+                  <li className="text-gray-600 text-sm ml-5! my-2!" key={index}>
+                    {logs.message}
+                  </li>
+                ))
+              ) : (
+                <p>No activity log found</p>
+              )}
             </div>
           </div>
         </div>

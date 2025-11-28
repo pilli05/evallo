@@ -18,6 +18,7 @@ interface EmployeesProps {
   getEmployeeList: () => Promise<void>;
   editEmployeeeId: number | null;
   setEditEmployeeId: (value: number | null) => void;
+  getLogs: () => Promise<void>;
 }
 
 interface EmployeeForm {
@@ -35,6 +36,7 @@ const Employees: React.FC<EmployeesProps> = ({
   getEmployeeList,
   editEmployeeeId,
   setEditEmployeeId,
+  getLogs,
 }) => {
   const {
     register,
@@ -91,8 +93,10 @@ const Employees: React.FC<EmployeesProps> = ({
       if (response.status === 201) {
         setOpenEmployeePopup(false);
         reset();
+        getTeamsList();
         toast.success("Employee created successfully");
         getEmployeeList();
+        getLogs();
       }
     } catch (error) {
       console.error("Employee creation failed:", error);
@@ -125,6 +129,7 @@ const Employees: React.FC<EmployeesProps> = ({
         getTeamsList();
         toast.success("Employee updated successfully");
         getEmployeeList();
+        getLogs();
       }
     } catch (error) {
       console.error("Employee update failed:", error);
@@ -217,8 +222,9 @@ const Employees: React.FC<EmployeesProps> = ({
             required: "Please select a team",
           })}
         >
+          <option value="">Select a team</option>
           {teamsList.map((team: Team) => (
-            <option>{team.team_name}</option>
+            <option key={team.id}>{team.team_name}</option>
           ))}
         </select>
 

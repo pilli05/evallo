@@ -5,10 +5,12 @@ import Register from "./pages/Auth/register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoute";
 import PublicRoute from "./components/PublicRoutes/PublicRoute";
+import Header from "./components/Header/Header";
 
 function App() {
   return (
-    <div className="h-screen bg-slate-200">
+    <div className="h-screen">
+      <Header />
       <Routes>
         <Route
           path="/login"

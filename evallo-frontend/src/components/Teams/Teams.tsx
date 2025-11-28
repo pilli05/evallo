@@ -11,6 +11,7 @@ interface TeamsProps {
   getTeamsList: () => Promise<void>;
   editTeamId: number | null;
   setEditTeamId: (value: number | null) => void;
+  getLogs: () => Promise<void>;
 }
 
 interface TeamForm {
@@ -22,6 +23,7 @@ const Teams: React.FC<TeamsProps> = ({
   setOpenTeamPopup,
   getTeamsList,
   editTeamId,
+  getLogs,
 }) => {
   const token = localStorage.getItem("token");
 
@@ -48,6 +50,7 @@ const Teams: React.FC<TeamsProps> = ({
         setOpenTeamPopup(false);
         reset();
         getTeamsList();
+        getLogs();
         toast.success("Team created successfully");
       }
     } catch (error) {
@@ -75,6 +78,7 @@ const Teams: React.FC<TeamsProps> = ({
         setOpenTeamPopup(false);
         reset();
         getTeamsList();
+        getLogs();
         toast.success("Team updated successfully");
       }
     } catch (error) {
