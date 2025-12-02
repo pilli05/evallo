@@ -22,7 +22,7 @@ const Login = () => {
   const formSubmit = async (data: LoginForm) => {
     try {
       const response = await axios.post(
-        "https://evallo-seven.vercel.app/api/v1/auth/login",
+        "https://evallo-backend-production.up.railway.app/api/v1/auth/login",
         data
       );
 
