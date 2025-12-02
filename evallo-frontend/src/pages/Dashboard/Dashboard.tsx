@@ -41,7 +41,7 @@ const Dashboard = () => {
   const getTeamsList = async () => {
     try {
       const response = await axios.get(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/teams`,
+        `https://evallo-seven.vercel.app/api/v1/user/teams`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ const Dashboard = () => {
   const getEmployeeList = async () => {
     try {
       const response = await axios.get(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/employee`,
+        `https://evallo-seven.vercel.app/api/v1/user/employee`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,7 +77,7 @@ const Dashboard = () => {
   const deleteTeam = async (teamId: number) => {
     try {
       const response = await axios.delete(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/teams/${teamId}`,
+        `https://evallo-seven.vercel.app/api/v1/user/teams/${teamId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const Dashboard = () => {
   const deleteEmployee = async (employeeId: number) => {
     try {
       const response = await axios.delete(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/employee/${employeeId}`,
+        `https://evallo-seven.vercel.app/api/v1/user/employee/${employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -119,7 +119,7 @@ const Dashboard = () => {
   const getMembersCount = async () => {
     try {
       const response = await axios.get(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/employeeTeam`,
+        `https://evallo-seven.vercel.app/api/v1/user/employeeTeam`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -137,7 +137,7 @@ const Dashboard = () => {
   const getLogs = async () => {
     try {
       const response = await axios.get(
-        "https://evallo-backend-production.up.railway.app/api/v1/user/logs",
+        "https://evallo-seven.vercel.app/api/v1/user/logs",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -156,7 +156,7 @@ const Dashboard = () => {
     const getUserProfile = async () => {
       try {
         const response = await axios.get(
-          "https://evallo-backend-production.up.railway.app/api/v1/user/profile",
+          "https://evallo-seven.vercel.app/api/v1/user/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,

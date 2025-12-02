@@ -38,7 +38,7 @@ const Teams: React.FC<TeamsProps> = ({
   const formSubmit = async (data: TeamForm) => {
     try {
       const response = await axios.post(
-        "https://evallo-backend-production.up.railway.app/api/v1/user/createTeam",
+        "https://evallo-seven.vercel.app/api/v1/user/createTeam",
         data,
         {
           headers: {
@@ -66,7 +66,7 @@ const Teams: React.FC<TeamsProps> = ({
       };
 
       const response = await axios.put(
-        "https://evallo-backend-production.up.railway.app/api/v1/user/teams/update",
+        "https://evallo-seven.vercel.app/api/v1/user/teams/update",
         payload,
         {
           headers: {
@@ -89,7 +89,7 @@ const Teams: React.FC<TeamsProps> = ({
   const getTeamDetailsById = async (teamId: number) => {
     try {
       const response = await axios.get(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/teams/${teamId}`,
+        `https://evallo-seven.vercel.app/api/v1/user/teams/${teamId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

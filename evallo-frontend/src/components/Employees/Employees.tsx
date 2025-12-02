@@ -51,7 +51,7 @@ const Employees: React.FC<EmployeesProps> = ({
   const getEmployeeDetailsById = async (employeeId: number) => {
     try {
       const response = await axios.get(
-        `https://evallo-backend-production.up.railway.app/api/v1/user/employee/${employeeId}`,
+        `https://evallo-seven.vercel.app/api/v1/user/employee/${employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ const Employees: React.FC<EmployeesProps> = ({
         teamId: selectedTeam?.id,
       };
       const response = await axios.post(
-        "https://evallo-backend-production.up.railway.app/api/v1/user/createEmployee",
+        "https://evallo-seven.vercel.app/api/v1/user/createEmployee",
         payload,
         {
           headers: {
@@ -114,7 +114,7 @@ const Employees: React.FC<EmployeesProps> = ({
         teamId: selectedTeam?.id,
       };
       const response = await axios.put(
-        "https://evallo-backend-production.up.railway.app/api/v1/user/employee/update",
+        "https://evallo-seven.vercel.app/api/v1/user/employee/update",
         payload,
         {
           headers: {
