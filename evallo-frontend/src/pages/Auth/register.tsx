@@ -20,7 +20,7 @@ const Register = () => {
   const formSubmit = async (data: RegisterForm) => {
     try {
       const response = await axios.post(
-        "https://evallo-seven.vercel.app/api/v1/auth/register",
+        "https://evallo-backend-production.up.railway.app/api/v1/auth/register",
         data
       );
       if (response.status === 201) {
